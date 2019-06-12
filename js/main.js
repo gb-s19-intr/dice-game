@@ -15,7 +15,7 @@
 // Roll #        1  2  3  4  5  6
 // Index #       0  1  2  3  4  5
 const history = [0, 0, 0, 0, 0, 0];
-
+//const totalRolls = 0;
 
 
 
@@ -28,13 +28,27 @@ const diceRoll = (sides=6) => {
    return Math.floor( Math.random() * sides ) + 1;
 }
 
+// Get the instances of a roll for a given number
 const historyOfOneNumber = (roll) => {
-   return `<li>${roll}: ${history[roll-1]} times</li>`;
+
+   // Accumulate the total number of rolls
+   const totalRolls = history.reduce( (total, num) => total + num );
+   const percentOfTotal = Math.round(history[roll-1] / totalRolls * 1000) / 10;
+
+   return `<li>${roll}: ${history[roll-1]} times (${percentOfTotal}%)</li>`;
 }
+
+// Update the instances of a roll by +1 for a given number
+const updateRollHistory = (roll) => {
+   history[roll-1]++;
+}
+
 
 const printAllRollStats = () => {
 
    const $rollStats = document.getElementById(`rollStats`);
+
+   $rollStats.innerHTML = ``;   
 
    for(let i = 1; i <= 6; i++) {
       $rollStats.innerHTML += historyOfOneNumber(i);
@@ -52,7 +66,7 @@ const printAllRollStats = () => {
 
 const $rollNum = document.getElementById(`rollNum`);
 const $rollImg = document.getElementById(`rollImg`);
-
+const $rollBtn = document.getElementById(`rollBtn`);
 
 
 
@@ -61,28 +75,21 @@ const $rollImg = document.getElementById(`rollImg`);
 // ********************************************************
 
 
-// Roll the dice once, store the value
-const diceFace = diceRoll();
+// Roll a die, update the DOM to show the result of the roll, when a user clicks the button
+$rollBtn.addEventListener(`click`, (event) => {
 
-$rollNum.innerHTML = `You rolled: ${diceFace}`;
-$rollImg.innerHTML = `<img src="img/dice${diceFace}.svg">`;
+   // Roll the dice once, store the value
+   const diceFace = diceRoll();
 
-printAllRollStats();
-// printAllRollStats()
-//    for-loop
-//       historyOfOneNumber(1)
-//          history[1-1]
-//       historyOfOneNumber(2)
-//          history[2-1]
-//       historyOfOneNumber(3)
-//          history[3-1]
-//       historyOfOneNumber(4)
-//          history[4-1]
-//       historyOfOneNumber(5)
-//          history[5-1]
-//       historyOfOneNumber(6)
-//          history[6-1]
-//    loop-done!
-// function-done!
+   //totalRolls++;
+
+   $rollNum.innerHTML = `You rolled: ${diceFace}`;
+   $rollImg.innerHTML = `<img src="img/dice${diceFace}.svg">`;
+
+   updateRollHistory(diceFace);
+
+   printAllRollStats();
+
+});
 
 
